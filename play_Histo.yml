@@ -1,4 +1,15 @@
 --- 
+# Este playbook requiere de los roles:
+# - sshpassDownload
+# - installHisto
+#
+# Funcionalidad:
+# - Descargar del sftp las versiones de historificacion .zip.
+# - Instalar y configurar.
+# 
+# El fichero inventory del que tira es:
+# - /etc/ansible/hosts
+
 - name: DOWNLOAD PROCESS
   hosts: local
   user: ansible
@@ -7,11 +18,11 @@
 
   roles:
     - role: sshpassDownload
-      v_usr: usuario
-      v_pass: pass 
-      v_server: server
-      v_remotePath: /path1/path2/
-      v_localPath: /path3/path4
+      v_usr: xx
+      v_pass: xx 
+      v_server: xx
+      v_remotePath: xx
+      v_localPath: xx
 
 - name: INSTALL PROCESS
   hosts: historificacion
@@ -21,8 +32,14 @@
 
   roles:
        #---------------------------------------------------
-       #Historificacion en la maquina XXX.XXX.XXX
+       #Historificacion en la maquina 180.101.180.155
        #---------------------------------------------------
 
     - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif'}
     - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' }
+
+       #---------------------------------------------------
+       #Historificacion en la maquina 180.197.76.209
+       #---------------------------------------------------
+
+    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' }
