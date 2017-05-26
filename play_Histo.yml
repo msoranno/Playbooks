@@ -1,0 +1,42 @@
+--- 
+- name: DOWNLOAD PROCESS
+  hosts: local
+  user: ansible
+  become: true
+  connection: local
+
+  roles:
+    - role: sshpassDownload
+      v_usr: isb_bksprueb_r
+      v_pass: FdTxJVMYU80 
+      v_server: sftpisban.isban.gs.corp
+      v_remotePath: /bksPruebas/BBDD_TC/
+      v_localPath: /home/ansible/Playbooks/tmp
+
+# - hosts: historificacion
+#   user: ansible
+#   become: true
+#   connection: ssh #tambien puede ser ssh
+#   pre_tasks:
+#   - name: Comienzo de la ejecición del role roleHisto
+#     raw: date >> /home/ansible/playbooks/Roles/roles/tiemposRoles.log
+#     when: "ansible_hostname == 'oclrh70c054'"
+#   roles:
+#     - sshpassDownload
+#       v_usr: 'isb_bksprueb_r'
+#       v_pass: 'FdTxJVMYU80' 
+#       v_server: 'sftpisban.isban.gs.corp'
+#       v_remotePath: '/bksPruebas/BBDD_TC/'
+#       v_localPath: '/home/ansible/playbooks/Roles/roles/sshpassDownload/files'
+#       #---------------------------------------------------
+#       #Historificacion en la maquina 180.101.180.155
+#       #---------------------------------------------------
+#     #- { role: roleHisto, laMaquina: 'ISLMDDWC01', rutaComprimido: '/historif/ansible' , usuario: 'historif',  tags: 'configuracion' }
+#     #- { role: roleHisto, laMaquina: 'ISLMDDWC01', rutaComprimido: '/usr/inst1/ansible', usuario: 'inst1'   ,  tags: 'configuracion' }
+    
+#   post_tasks:
+#   - name: Fin de la ejecucion del role roleHisto
+#     raw: date >> /home/ansible/playbooks/Roles/roles/tiemposRoles.log 
+#     when: "ansible_hostname == 'oclrh70c054'"
+
+
