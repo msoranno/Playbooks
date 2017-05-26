@@ -13,5 +13,16 @@
       v_remotePath: /path1/path2/
       v_localPath: /path3/path4
 
+- name: INSTALL PROCESS
+  hosts: historificacion
+  user: ansible
+  become: true
+  connection: ssh
 
+  roles:
+       #---------------------------------------------------
+       #Historificacion en la maquina XXX.XXX.XXX
+       #---------------------------------------------------
 
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif'}
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' }
