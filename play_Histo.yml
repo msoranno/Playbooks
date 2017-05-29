@@ -14,11 +14,8 @@
   user: ansible
   become: true
   connection: local
-  # vars:
-  #   - u_sftp: "{{ V_USR }}"
-  #   - pass: "{{ V_PASS }}"
-  #   - server: "{{ V_SERVER }}"
-
+ 
+  #Las variables en MAYUSCULAS se reciben desde CLI.
   roles:
     - role: sshpassDownload
       v_usr: "{{ V_USR }}"
