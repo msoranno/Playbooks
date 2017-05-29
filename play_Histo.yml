@@ -43,3 +43,14 @@
        #---------------------------------------------------
 
     - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' }
+
+
+- name: CONFIG PROCESS
+  hosts: local
+  user: ansible
+  become: true
+  connection: local
+
+  roles:
+     - configHisto
+ 
