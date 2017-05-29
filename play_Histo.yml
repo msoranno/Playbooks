@@ -1,0 +1,48 @@
+--- 
+# Este playbook requiere de los roles:
+# - sshpassDownload
+# - installHisto
+#
+# Funcionalidad:
+# - Descargar del sftp las versiones de historificacion .zip.
+# - Instalar y configurar.
+# 
+# El fichero inventory del que tira es local:
+
+- name: DOWNLOAD PROCESS
+  hosts: local
+  user: ansible
+  become: true
+  connection: local
+  # vars:
+  #   - u_sftp: "{{ V_USR }}"
+  #   - pass: "{{ V_PASS }}"
+  #   - server: "{{ V_SERVER }}"
+
+  roles:
+    - role: sshpassDownload
+      v_usr: "{{ V_USR }}"
+      v_pass: "{{ V_PASS }}"
+      v_server: "{{ V_SERVER }}"
+      v_remotePath: /bksCCD/ADH_4_2_4/PREREQUISITOS/
+      v_localPath: /home/msoranno/Playbooks/tmp
+
+- name: INSTALL PROCESS
+  hosts: historificacion
+  user: ansible
+  become: true
+  connection: ssh
+
+  roles:
+       #---------------------------------------------------
+       #Historificacion en la maquina 180.101.180.155
+       #---------------------------------------------------
+
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif'}
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' }
+
+       #---------------------------------------------------
+       #Historificacion en la maquina 180.197.76.209
+       #---------------------------------------------------
+
+    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' }
