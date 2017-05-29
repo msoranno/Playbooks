@@ -34,10 +34,10 @@
        #---------------------------------------------------
        #Historificacion en la maquina 180.101.180.155
        #---------------------------------------------------
-
+         
     - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif'}
     - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' }
-
+         
        #---------------------------------------------------
        #Historificacion en la maquina 180.197.76.209
        #---------------------------------------------------
@@ -45,12 +45,12 @@
     - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' }
 
 
-- name: CONFIG PROCESS
-  hosts: local
-  user: ansible
-  become: true
-  connection: local
+# - name: CONFIG PROCESS
+#   hosts: historificacion
+#   user: ansible
+#   become: true
+#   connection: ssh
 
-  roles:
-     - configHisto
+#   roles:
+#      - { role: configHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif' }
  
