@@ -1,13 +1,18 @@
 --- 
 # Este playbook requiere de los roles:
-# - sshpassDownload
-# - installHisto
+# - sshpassDownload (Descarga el zip)
+# - installHisto (instala y configura)
 #
 # Funcionalidad:
 # - Descargar del sftp las versiones de historificacion .zip.
 # - Instalar y configurar.
 # 
-# El fichero inventory del que tira es local:
+# - El fichero inventory del que tira es local
+# - Este playbook debe ejecutarse desde de comando de la siguiente forma
+#   ansible-playbook --extra-vars '{"V_USR":"usuarioSftp", "V_PASS":"claveSftp", "V_SERVER":"servidorSftp", "V_F":"BBDDTC_V02R00F03.zip"}' play_Histo.yml
+#
+# - Es posible ejecutar el mismo role n veces, dependera de si existe mas de una historificacion configurada en la misma maquina.
+
 
 - name: DOWNLOAD PROCESS
   hosts: local
@@ -21,6 +26,7 @@
       v_usr: "{{ V_USR }}"
       v_pass: "{{ V_PASS }}"
       v_server: "{{ V_SERVER }}"
+      download_this_file: "{{ V_F }}"
       v_remotePath: /bksCCD/ADH_4_2_4/PREREQUISITOS/
       v_localPath: /home/msoranno/Playbooks/tmp
 
@@ -35,22 +41,15 @@
        #Historificacion en la maquina 180.101.180.155
        #---------------------------------------------------
          
-    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif'}
-    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' }
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif' , download_this_file: "{{ V_F }}" }
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' ,  download_this_file: "{{ V_F }}" }
          
        #---------------------------------------------------
        #Historificacion en la maquina 180.197.76.209
        #---------------------------------------------------
 
-    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' }
+    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' , download_this_file: "{{ V_F }}" }
 
 
-# - name: CONFIG PROCESS
-#   hosts: historificacion
-#   user: ansible
-#   become: true
-#   connection: ssh
 
-#   roles:
-#      - { role: configHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif' }
  
