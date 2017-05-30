@@ -42,13 +42,13 @@
        #---------------------------------------------------
          
     - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/historif/ansible' , usuario: 'historif' , download_this_file: "{{ V_F }}" }
-    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1' ,  download_this_file: "{{ V_F }}" }
+    - { role: installHisto, laMaquina: 'ISLMDDWC01', rutaRemotaComprimido: '/usr/inst1/ansible', usuario: 'inst1'    , download_this_file: "{{ V_F }}" }
          
        #---------------------------------------------------
        #Historificacion en la maquina 180.197.76.209
        #---------------------------------------------------
 
-    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3' , download_this_file: "{{ V_F }}" }
+    - { role: installHisto, laMaquina: 'OCLDB2D208', rutaRemotaComprimido: '/usr/inst3/ansible', usuario: 'inst3'    , download_this_file: "{{ V_F }}" }
 
 
 
