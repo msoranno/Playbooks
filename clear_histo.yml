@@ -1,0 +1,14 @@
+---
+- hosts: historificacion
+  user: ansible
+  become: true
+  connection: ssh
+  gather_facts: False
+  tasks:
+    - name: BORRANDO DE FORMA MANUAL LAS INSTALACIONES DE HISTORIFICACION
+      shell: |
+        rm -rf {{ item }}/ansible/historificacion
+      with_items: 
+        - /historif
+        - /usr/inst1
+        - /usr/inst3
