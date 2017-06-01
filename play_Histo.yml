@@ -21,14 +21,15 @@
   connection: local
  
   #Las variables en MAYUSCULAS se reciben desde CLI.
+  #Las que estan en minusculas vienen de /defaults/main.yml
   roles:
     - role: sshpassDownload
       v_usr: "{{ V_USR }}"
       v_pass: "{{ V_PASS }}"
       v_server: "{{ V_SERVER }}"
       download_this_file: "{{ V_F }}"
-      v_remotePath: /bksCCD/ADH_4_2_4/PREREQUISITOS/
-      v_localPath: /home/msoranno/Playbooks/tmp
+      v_remotePath: "{{ rutaRemotaSftp }}"
+      v_localPath: "{{ rutaLocalDescarga }}"
 
 - name: INSTALL PROCESS
   hosts: historificacion
