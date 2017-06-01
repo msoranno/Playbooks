@@ -32,7 +32,7 @@
       v_localPath: "{{ rutaLocalDescarga }}"
 
 - name: INSTALL PROCESS
-  hosts: historificacion
+  hosts: solouna
   user: ansible
   become: true
   connection: ssh
