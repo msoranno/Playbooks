@@ -37,6 +37,12 @@
   become: true
   connection: ssh
 
+  #--------------------
+  # El role installHisto, instala la historificaion donde se le diga. Por seguridad, siempre que se añada una
+  # nueva instalacion, hay que hacerlo explicitamente aqui y en el fichero de inventario (hosts) local al playbook.
+  # Ademas, hay que recordar que el role tiene definido grupo de variables tanto en /default como en /vars
+  #--------------------
+
   roles:
        #---------------------------------------------------
        #Historificacion en la maquina 180.101.180.155
