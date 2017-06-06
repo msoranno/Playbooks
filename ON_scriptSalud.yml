@@ -1,0 +1,46 @@
+---
+
+  # Instalacion de passlib
+  # yum install python-pip
+  # pip install --upgrade pip
+  # pip install passlib
+
+
+- hosts: local
+  user: ansible
+  become: True
+  connection: local
+  gather_facts: False
+
+  #
+  # La password inicial especificada aqui se usura para 
+  # el listado de usuarios creados en el listado inferior.
+  #
+  vars_prompt:
+   - name: "user_password"    
+     prompt: "Escriba una password inicial"    
+     private: yes    
+     encrypt: "md5_crypt" #need to have python-passlib installed in local machine before we can use it    
+     confirm: yes    
+     salt_size: 7 # tema de encriptacion
+
+  tasks:
+    - name: TRABAJANDO CON EL GRUPO health con Id 5000
+      group:
+        name: health
+        state: present
+        gid: 5000
+
+    - name: TRABAJANDO CON LOS USUARIOS
+      user:
+         name: "{{ item }}"
+         password: "{{ user_password }}"
+         comment: "usuario para los scripts de salud"
+         groups: health,docker
+         home: "/home/{{ item }}"
+         state: present
+      with_items:
+        - salud
+
+
+

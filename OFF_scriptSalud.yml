@@ -1,0 +1,24 @@
+---
+- hosts: local
+  connection: local
+  become: True
+  gather_facts: False
+  user: ansible
+
+
+  tasks:
+  - name: ELIMINANDO grupo health de los usuarios
+    user:
+       name: "{{ item }}"
+       comment: "usuario para los scripts de salud"
+       groups: docker # el usuario solo mantiene su propio grupo y este.
+       state: present
+    with_items:
+      - salud
+      - qauser
+
+# - name: ELIMINANDO EL GRUPO health con Id 5000
+#   group:
+#     name: health
+#     state: absent
+  #     gid: 5000
