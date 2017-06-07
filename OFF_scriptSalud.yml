@@ -1,4 +1,7 @@
 ---
+
+# Creo que bastaría con eliminar el grupo health y eliminar el usuario salud.
+
 - hosts: local
   connection: local
   become: True
@@ -7,18 +10,15 @@
 
 
   tasks:
-  - name: ELIMINANDO grupo health de los usuarios
+  - name: ELIMINANDO EL GRUPO health 
+    group:
+      name: health
+      state: absent
+ 
+  - name: ELIMINANDO el usuario salud
     user:
        name: "{{ item }}"
        comment: "usuario para los scripts de salud"
-       groups: docker # el usuario solo mantiene su propio grupo y este.
-       state: present
+       state: absent
     with_items:
       - salud
-      - qauser
-
-# - name: ELIMINANDO EL GRUPO health con Id 5000
-#   group:
-#     name: health
-#     state: absent
-  #     gid: 5000

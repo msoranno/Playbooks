@@ -6,6 +6,11 @@
   # pip install passlib
 
 
+  # Lo que hace este playbook
+  # - Crea el grupo health con id 5000
+  # - Crea el usuario salud y lo mete en los grupos health y docker.
+
+
 - hosts: local
   user: ansible
   become: True
@@ -25,13 +30,13 @@
      salt_size: 7 # tema de encriptacion
 
   tasks:
-    - name: TRABAJANDO CON EL GRUPO health con Id 5000
+    - name: CREAMOS grupo health con Id 5000
       group:
         name: health
         state: present
         gid: 5000
 
-    - name: TRABAJANDO CON LOS USUARIOS
+    - name: CREAMOS EL SUAURIO SALUD Y LO METEMOS EN LOS GRUPOS CORRESPONDIENTES
       user:
          name: "{{ item }}"
          password: "{{ user_password }}"
