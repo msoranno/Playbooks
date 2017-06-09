@@ -1,0 +1,62 @@
+---
+
+ # Este Play puede servir para 2 cosas:
+ #  1. Establecer contraseña del usuario salud de forma masiva.
+ #  2. Crear grupos a los que debe pertenecer el usuario salud en las respectivas maquinas.
+
+
+
+- hosts: scriptSalud
+  user: root
+  become: True
+  connection: ssh
+  gather_facts: False
+
+  #
+  # La password inicial especificada aqui se usura para 
+  # el listado de usuarios creados en el listado inferior.
+  #
+ 
+ # Activar esto para cambiar los usuarios.
+ # vars_prompt:
+ #  - name: "user_password"    
+ #    prompt: "Escriba una password inicial"    
+ #    private: yes    
+ #    encrypt: "md5_crypt" #need to have python-passlib installed in local machine before we can use it    
+ #    confirm: yes    
+ #    salt_size: 7 # tema de encriptacion
+
+
+# Estas tarea saca el listado de los grupos de cada maquina, y le va agregando al usaurio salud el grupo
+# correspondiente que se vaya encontrando.
+# Al parecer funciona bien, solo hay que ir agregando grupos conforme vayan haciendo falta.
+
+  tasks:
+    - name: SACANDO LISTADO DE GRUPOS
+      shell: cat /etc/group | cut -d ':' -f1
+      register: listado
+
+    - name: CONFIGURAMOS EL USUARIO salud 
+      user:
+         name: "salud"
+        # password: "{{ user_password }}"
+         comment: "usuario para los scripts de salud"
+         groups: "{{ item }}"
+         home: "/home/{{ item }}"
+         state: present
+         append: yes
+      when: '"{{ item }}" in listado.stdout_lines'
+      with_items:
+        - websphere
+        - Websphere
+        - bks
+        - BKS
+        - mqm
+        - db2iadm
+        - admwas
+
+
+
+
+
+
