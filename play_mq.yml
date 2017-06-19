@@ -30,9 +30,9 @@
       when: ACCION == 'STATUS'
       
       
-    - name: PARANDO QUEUEMANAGERS
+    - name: PARANDO QUEUEMANAGERS - ESTE PROCESO PUEDE TARDAR UN POCO
       shell: |
-        endmqm -c "{{ item }}"
+        endmqm "{{ item }}"
       become: True
       register: rsp_cmd
       become_user: 'mqm'
