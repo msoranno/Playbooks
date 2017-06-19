@@ -1,0 +1,55 @@
+---
+# La idea de este playbook es usarlo para deterner y arrancar de forma masiva
+# quemanager de varias maquinas. 
+# 
+# Recebe como parametro 2 valores :
+# - El nombre del grupo de maquinas
+# - La accion que puede ser STATUS STOP START
+#
+
+- hosts: "{{ GRUPOMAQUINAS }}"
+  user: root
+  connection: ssh
+  gather_facts: False
+
+  tasks:
+    - name: Solicitud externa
+      debug:
+        msg: "Aplicar la accion {{ ACCION }} al grupo de servidores {{ GRUPOMAQUINAS }}"
+
+    - name: Listamos los quemanagers
+      shell: |
+        dspmq
+      register: respuesta
+      become: True
+      become_user: 'mqm'
+      when: ACCION == 'STATUS'
+      #failed_when: respuesta.rc > 2
+
+    - debug:  var=respuesta.stdout_lines
+      when: ACCION == 'STATUS'
+      
+      
+    - name: PARANDO QUEUEMANAGERS
+      shell: |
+        endmqm -c "{{ item }}"
+      become: True
+      register: rsp_cmd
+      become_user: 'mqm'
+      with_items: "{{ qmanagers }}"
+      when: ACCION == 'STOP'
+      #failed_when: rsp_cmd.rc > 2
+
+  
+    - name: ARRANCANDO QUEUEMANAGERS
+      shell: |
+        strmqm "{{ item }}"
+      become: True
+      register: rsp_cmd
+      become_user: 'mqm'
+      with_items: "{{ qmanagers }}"
+      when: ACCION == 'START'
+      failed_when: rsp_cmd.rc != 5
+
+
+
