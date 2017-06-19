@@ -1,0 +1,59 @@
+---
+# La idea de este playbook es usarlo para deterner y arrancar de forma masiva
+# instancias de varias maquinas. 
+# 
+# Recebe como parametro 2 valores :
+# - El nombre del grupo de maquinas
+# - La accion que puede ser STATUS STOP START
+#
+
+- hosts: "{{ GRUPOMAQUINAS }}"
+  user: root
+  connection: ssh
+  gather_facts: False
+
+  tasks:
+    - name: Solicitud externa
+      debug:
+        msg: "Aplicar la accion {{ ACCION }} al grupo de servidores {{ GRUPOMAQUINAS }}"
+
+    - name: Listamos las bases de datos
+      shell: |
+        . ~/sqllib/db2profile 
+        db2 list applications
+      register: respuesta
+      become: True
+      become_user: "{{ item }}"
+      with_items: "{{ instancias }}"
+      when: ACCION == 'STATUS'
+      failed_when: respuesta.rc > 2
+
+    - debug:  var=item.stdout_lines
+      with_items: "{{ respuesta.results }}"
+      when: ACCION == 'STATUS'
+      
+    - name: PARANDO INSTANCIAS
+      shell: |
+        . ~/sqllib/db2profile 
+        db2stop force
+      become: True
+      register: rsp_cmd
+      become_user: "{{ item }}"
+      with_items: "{{ instancias }}"
+      when: ACCION == 'STOP'
+      failed_when: rsp_cmd.rc > 2
+
+  
+    - name: ARRANCANDO INSTANCIAS
+      shell: |
+        . ~/sqllib/db2profile 
+        db2start
+      become: True
+      register: rsp_cmd
+      become_user: "{{ item }}"
+      with_items: "{{ instancias }}"
+      when: ACCION == 'START'
+      failed_when: rsp_cmd.rc > 2
+
+
+
