@@ -32,6 +32,7 @@
       with_items: "{{ respuesta.results }}"
       when: ACCION == 'STATUS'
       
+      
     - name: PARANDO INSTANCIAS
       shell: |
         . ~/sqllib/db2profile 

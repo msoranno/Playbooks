@@ -12,19 +12,15 @@
   connection: ssh
   gather_facts: False
 
-  #
-  # La password inicial especificada aqui se usura para 
-  # el listado de usuarios creados en el listado inferior.
-  #
  
  # Activar esto para cambiar los usuarios.
- # vars_prompt:
- #  - name: "user_password"    
- #    prompt: "Escriba una password inicial"    
- #    private: yes    
- #    encrypt: "md5_crypt" #need to have python-passlib installed in local machine before we can use it    
- #    confirm: yes    
- #    salt_size: 7 # tema de encriptacion
+  vars_prompt:
+    - name: "user_password"    
+      prompt: "Escriba una password inicial"    
+      private: yes    
+      encrypt: "md5_crypt" #need to have python-passlib installed in local machine before we can use it    
+      confirm: yes    
+      salt_size: 7 # tema de encriptacion
 
 
 # Estas tarea saca el listado de los grupos de cada maquina, y le va agregando al usaurio salud el grupo
@@ -39,7 +35,7 @@
     - name: CONFIGURAMOS EL USUARIO salud 
       user:
          name: "salud"
-        # password: "{{ user_password }}"
+         password: "{{ user_password }}"
          comment: "usuario para los scripts de salud"
          groups: "{{ item }}"
          home: "/home/{{ item }}"
