@@ -56,5 +56,13 @@
       when: ACCION == 'START'
       failed_when: rsp_cmd.rc > 2
 
+    - name: BUSCANDO VERSIONES 
+      shell: |
+        db2ls 
+      become: True
+      register: rsp_cmd
+      when: ACCION == 'VERSION'
 
+    - debug:  var=rsp_cmd.stdout_lines
+      when: ACCION == 'VERSION'
 

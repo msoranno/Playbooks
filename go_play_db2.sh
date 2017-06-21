@@ -9,6 +9,7 @@ if [ "$#" -ne 2 ]; then
 	echo " ./go_play_db2.sh maquinasdb2 STOP"
 	echo " ./go_play_db2.sh maquinasdb2 START"
 	echo " ./go_play_db2.sh maquinasdb2 STATUS"
+        echo " ./go_play_db2.sh maquinasdb2 VERSION"
 	echo
 else
   echo
