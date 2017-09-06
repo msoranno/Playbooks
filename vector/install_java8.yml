@@ -1,0 +1,130 @@
+---
+#---------------------------------------------------------------------------
+# Este playbook instala java8 tanto en Centos7 como en Ubuntu.
+# Se pueden observar 2 grupos de tareas independientes, unas que 
+# aplicaran sin el S.O es centos7 y otras si es ubuntu.
+#
+# Si la instalación es en ubuntu se hace desde los propios repositorios, pero
+# si la instalación es desde centos se hace de forma manual.
+#----------------------------------------------------------------------------
+- hosts: dani
+  become: True
+  vars:
+    #--------------------------------------------------------
+    # Son variables exclusivas para instalar en centos7
+    # para ubuntu no hacen falta.
+    #--------------------------------------------------------
+    #
+    # url usada: 
+    #   http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.tar.gz
+    #
+    jdk_version_detail_custom: "8u141-b15"
+    jdk_tarball_hash: "336fa29ff2bb4ef291e347e091f7f4a7"
+    jdk_archive: "jdk-8u141-linux-x64.tar.gz"
+    jdk_local_dir: jdk1.8.0_141
+    profile_path: "/etc/profile.d"
+    download_folder: "/opt/oracle"
+    java_script_sh: "oracle_jdk.sh"
+    java_archive: "{{ download_folder }}/{{ jdk_archive }}"
+    java_name: "{{ download_folder }}/{{ jdk_local_dir }}"
+    jdk_tarball_url: "http://download.oracle.com/otn-pub/java/jdk/{{ jdk_version_detail_custom }}/{{ jdk_tarball_hash }}/{{ jdk_archive }}"
+
+  tasks:
+#--------------------------    
+# Centos
+#--------------------------
+  - name: Instalamos wget
+    yum:
+      name: wget
+      state: latest    
+    when: ansible_distribution == 'CentOS'
+
+  - name: Creamos la estructura de directorios
+    command: mkdir -p {{item}}
+    when: ansible_distribution == 'CentOS'
+    with_items: ["{{download_folder}}", "{{java_name}}"]
+
+  - name: Descargamos Java
+    get_url: url={{ jdk_tarball_url }}  dest={{ java_archive }} headers="Cookie:' gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie'" validate_certs=no owner=root group=root mode=744
+    when: ansible_distribution == 'CentOS'
+  
+  - name: Extraemos Ficheros
+    unarchive:
+      src: "{{java_archive}}"
+      dest: "{{download_folder}}"
+      remote_src: yes
+    when: ansible_distribution == 'CentOS'
+
+  - name: Le damos permisos y seguridad
+    file: state=directory path={{java_name}} owner=root group=root recurse=yes
+    when: ansible_distribution == 'CentOS'
+
+  - name: Configuramos alternatives java
+    command: "{{item}}"
+    when: ansible_distribution == 'CentOS'
+    with_items:
+      - "alternatives --install /usr/bin/java java {{ java_name }}/bin/java 2000"
+      - "alternatives --install /usr/bin/jar jar {{ java_name }}/bin/jar 2"
+      - "alternatives --install /usr/bin/javac javac {{ java_name }}/bin/javac 2"
+      - "alternatives --set jar {{ java_name }}/bin/jar"
+      - "alternatives --set javac {{ java_name }}/bin/javac"
+
+  - name: Variable de entorno global file under {{profile_path}}
+    set_fact: remote_file_path={{profile_path}}/{{java_script_sh}}
+    when: ansible_distribution == 'CentOS'
+
+  # Create a blank file
+  - name: Create a new file {{profile_path}}/{{java_script_sh}}
+    file: path={{remote_file_path}} state=touch
+    when: ansible_distribution == 'CentOS'
+
+  # Check remote file
+  - stat: path={{remote_file_path}}
+    register: file_path
+    when: ansible_distribution == 'CentOS'
+
+  # If file exist then copy content in remote file.
+  #  - copy: content={{file_content}} dest={{remote_file_path}}
+  #    when: file_path.stat.exists == true
+  #
+  # Copy /etc/profile.d/oracle_jdk.sh with content
+  - name: Copiando el contenido del fichero
+    copy:
+      content: |
+                #!/bin/bash
+                export JDK_HOME={{ java_name }}
+                export JAVA_HOME={{ java_name }}
+                export JRE_HOME={{ java_name }}/jre
+                export PATH=$PATH:{{ java_name }}/bin:{{ java_name }}/jre/bin
+      dest: "{{profile_path}}/{{java_script_sh}}"
+    when: ansible_distribution == 'CentOS'
+
+
+  - name: Arreglamos los permisos del fichero
+    file: path={{profile_path}}/{{java_script_sh}} owner=root group=root mode=0555 state=file recurse=no
+    when: ansible_distribution == 'CentOS'
+
+  # Export the env on th fly to make system wide change
+  - name: Source the file {{profile_path}}/{{java_script_sh}}
+    action: shell source /etc/profile
+    when: ansible_distribution == 'CentOS'
+
+
+#--------------------
+# Ubuntu
+#--------------------
+  - name: Install java 8 preresequesits
+    apt: name=python-software-properties
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: Add Java 8 repository
+    apt_repository: repo='ppa:webupd8team/java'
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: Agree to oracle license
+    debconf: name=oracle-java8-installer question=shared/accepted-oracle-license-v1-1 vtype=select value=true
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: Install Java 8
+    apt: name=oracle-java8-installer force=yes
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
