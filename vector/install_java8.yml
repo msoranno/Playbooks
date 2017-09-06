@@ -7,7 +7,7 @@
 # Si la instalación es en ubuntu se hace desde los propios repositorios, pero
 # si la instalación es desde centos se hace de forma manual.
 #----------------------------------------------------------------------------
-- hosts: dani
+- hosts: PIMADI
   become: True
   vars:
     #--------------------------------------------------------
